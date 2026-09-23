@@ -1,1 +1,1129 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Mrs. Sudip ❤️</title>
+    <!-- Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0A0306;
+            --burgundy: #2D0B12;
+            --deep-crimson: #580C1E;
+            --rose: #E63946;
+            --soft-pink: #FFB7C5;
+            --gold: #D4AF37;
+            --glass-bg: rgba(20, 8, 14, 0.82);
+            --glass-border: rgba(255, 183, 197, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: var(--bg-dark);
+            font-family: 'Montserrat', sans-serif;
+            color: #FFFFFF;
+        }
+
+        /* Decorative Canvases - Strictly Behind Content */
+        #particleCanvas, #rocketCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        #particleCanvas { z-index: 1; }
+        #rocketCanvas { z-index: 99; }
+
+        /* Secret Developer Star Trigger */
+        .dev-star {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 1000;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+        .dev-star:hover { color: var(--gold); }
+
+        /* Fixed Navigation Progress Dots */
+        .progress-bar {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: rgba(10, 3, 6, 0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 183, 197, 0.15);
+            backdrop-filter: blur(8px);
+        }
+        .progress-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+        }
+        .progress-dot.active {
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+            transform: scale(1.3);
+        }
+
+        /* Main Application Viewport */
+        #app {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 16px 30px;
+        }
+
+        /* Single Scene Router Containers */
+        .scene {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.96) translateY(12px);
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            margin: auto;
+        }
+
+        .scene.enter-active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .scene.exit-active {
+            opacity: 0;
+            transform: scale(1.02) translateY(-12px);
+            pointer-events: none;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            color: var(--soft-pink);
+            text-shadow: 0 0 12px rgba(255, 183, 197, 0.25);
+            font-weight: 600;
+        }
+
+        .cursive {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.8rem;
+            color: var(--gold);
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.35);
+            margin: 10px 0;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #E2D4D7;
+            margin-bottom: 14px;
+            font-weight: 300;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 183, 197, 0.05);
+            width: 100%;
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--deep-crimson), var(--burgundy));
+            border: 1px solid var(--glass-border);
+            color: #FFF;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            flex: 1;
+            min-width: 120px;
+            max-width: 220px;
+        }
+
+        .btn:active { transform: scale(0.95); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #B8860B, var(--gold));
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Strictly Uncropped Photo Frame Container */
+        .photo-frame {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            max-height: 50vh;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 25px rgba(230, 57, 70, 0.2);
+            background: #050305;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+        }
+
+        .media-loader {
+            color: var(--soft-pink);
+            font-size: 0.85rem;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Audio Control Wrapper */
+        .audio-wrapper {
+            width: 100%;
+            margin-top: 12px;
+            background: rgba(10, 3, 6, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 10px;
+        }
+
+        audio {
+            width: 100%;
+            height: 40px;
+            outline: none;
+            border-radius: 8px;
+        }
+
+        .audio-status {
+            font-size: 0.8rem;
+            color: var(--soft-pink);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        /* Modal Overlays (Developer Panel) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dev-panel {
+            background: #12060C;
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 460px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 24px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #DDD;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .dev-panel h2 { color: var(--gold); text-align: center; font-size: 1.3rem; }
+        .dev-panel code { background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 4px; color: var(--soft-pink); font-size: 0.8rem; }
+        
+        .dev-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 183, 197, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .dev-section h3 {
+            font-size: 0.9rem;
+            color: var(--soft-pink);
+            margin-bottom: 8px;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .diag-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+        .diag-ok { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
+        .diag-err { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+
+        .file-input-wrapper {
+            margin-top: 6px;
+        }
+        .file-input-wrapper input[type="file"] {
+            font-size: 0.75rem;
+            color: #AAA;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Background Decorative Layers -->
+    <canvas id="particleCanvas"></canvas>
+    <canvas id="rocketCanvas"></canvas>
+
+    <!-- Hidden Developer Access Trigger -->
+    <div class="dev-star" id="devStar">✦</div>
+
+    <!-- Application Progress Indicator -->
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+    </div>
+
+    <!-- SINGLE ROOT APPLICATION CONTAINER -->
+    <div id="app"></div>
+
+    <!-- DEVELOPER DASHBOARD MODAL -->
+    <div class="modal-overlay" id="devModal">
+        <!-- STEP 1: AUTHENTICATION -->
+        <div class="dev-panel" id="devAuthStep">
+            <h2>Developer Access</h2>
+            <p style="margin-top:10px; text-align:center;">Enter Password:</p>
+            <input type="password" id="devPasswordInput" style="width:100%; padding:10px; margin:12px 0; background:#000; border:1px solid var(--glass-border); color:#FFF; border-radius:8px; text-align:center;" placeholder="****">
+            <div id="authErr" style="color:var(--rose); text-align:center; font-size:0.8rem; margin-bottom:10px;"></div>
+            <div class="btn-group">
+                <button class="btn btn-gold" onclick="verifyDevPassword()">Login</button>
+                <button class="btn" onclick="closeDevModal()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: REAL DEVELOPER DASHBOARD -->
+        <div class="dev-panel hidden" id="devDashboardStep">
+            <h2>Developer Control Panel</h2>
+
+            <!-- Media Diagnostics -->
+            <div class="dev-section">
+                <h3>Media Diagnostics</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; font-size:0.8rem;">
+                    <div>Photo 1: <span id="diagP1" class="diag-badge">Checking...</span></div>
+                    <div>Music 1: <span id="diagM1" class="diag-badge">Checking...</span></div>
+                    <div>Photo 2: <span id="diagP2" class="diag-badge">Checking...</span></div>
+                    <div>Music 2: <span id="diagM2" class="diag-badge">Checking...</span></div>
+                </div>
+            </div>
+
+            <!-- Local Media Management & Preview -->
+            <div class="dev-section">
+                <h3>Local Media Preview</h3>
+                <p style="font-size:0.75rem; color:#AAA; margin-bottom:10px;">
+                    Select local files to preview media immediately.
+                </p>
+
+                <!-- Photo 1 Preview -->
+                <div style="margin-bottom:12px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:8px;">
+                    <strong>Photo 1</strong> <code>assets/photo1.jpg</code>
+                    <div class="file-input-wrapper">
+                        <input type="file" accept="image/*" onchange="previewDevImage(this, 'devPrevP1', 'metaP1')">
+                    </div>
+                    <div id="metaP1" style="font-size:0.7rem; color:var(--soft-pink); margin-top:4px;"></div>
+                    <img id="devPrevP1" style="max-height:80px; margin-top:4px; border-radius:6px; display:none; object-fit:contain;">
+                </div>
+
+                <!-- Music 1 Preview -->
+                <div style="margin-bottom:12px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:8px;">
+                    <strong>Music 1</strong> <code>assets/music1.mp3</code>
+                    <div class="file-input-wrapper">
+                        <input type="file" accept="audio/*" onchange="previewDevAudio(this, 'devPrevM1', 'metaM1')">
+                    </div>
+                    <div id="metaM1" style="font-size:0.7rem; color:var(--soft-pink); margin-top:4px;"></div>
+                    <audio id="devPrevM1" controls style="width:100%; height:30px; margin-top:4px; display:none;"></audio>
+                </div>
+
+                <!-- Photo 2 Preview -->
+                <div style="margin-bottom:12px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:8px;">
+                    <strong>Photo 2</strong> <code>assets/photo2.jpg</code>
+                    <div class="file-input-wrapper">
+                        <input type="file" accept="image/*" onchange="previewDevImage(this, 'devPrevP2', 'metaP2')">
+                    </div>
+                    <div id="metaP2" style="font-size:0.7rem; color:var(--soft-pink); margin-top:4px;"></div>
+                    <img id="devPrevP2" style="max-height:80px; margin-top:4px; border-radius:6px; display:none; object-fit:contain;">
+                </div>
+
+                <!-- Music 2 Preview -->
+                <div>
+                    <strong>Music 2</strong> <code>assets/music2.mp3</code>
+                    <div class="file-input-wrapper">
+                        <input type="file" accept="audio/*" onchange="previewDevAudio(this, 'devPrevM2', 'metaM2')">
+                    </div>
+                    <div id="metaM2" style="font-size:0.7rem; color:var(--soft-pink); margin-top:4px;"></div>
+                    <audio id="devPrevM2" controls style="width:100%; height:30px; margin-top:4px; display:none;"></audio>
+                </div>
+            </div>
+
+            <!-- GitHub Instructions Notice -->
+            <div style="margin-top:12px; font-size:0.75rem; color:var(--gold); text-align:center; background:rgba(212,175,55,0.08); padding:10px; border-radius:8px;">
+                Local preview active. To permanently update media on GitHub Pages, commit files directly into your repository's <code>assets/</code> directory.
+            </div>
+
+            <div class="btn-group" style="margin-top:15px;">
+                <button class="btn" onclick="showDevHelp()">How to Replace on GitHub</button>
+                <button class="btn btn-gold" onclick="closeDevModal()">Close</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: GITHUB HELP MODAL -->
+        <div class="dev-panel hidden" id="devHelpStep">
+            <h2>GitHub Deployment Guide</h2>
+            <p style="margin-top:10px;">To update your media files permanently:</p>
+            <ol style="margin-left:20px; line-height:1.7; font-size:0.8rem;">
+                <li>Open your repository on <strong>GitHub.com</strong>.</li>
+                <li>Navigate to the <code>assets/</code> folder.</li>
+                <li>Click <strong>Add file</strong> → <strong>Upload files</strong>.</li>
+                <li>Upload your new media with these exact names:
+                    <br><code>photo1.jpg</code>, <code>music1.mp3</code>, <code>photo2.jpg</code>, <code>music2.mp3</code>
+                </li>
+                <li>Click <strong>Commit changes</strong>.</li>
+            </ol>
+            <div class="btn-group" style="margin-top:15px;">
+                <button class="btn btn-gold" style="width:100%;" onclick="showDevDashboard()">Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. APPLICATION ROUTER & GUARANTEED BOOT ENGINE
+        // ==========================================
+        let currentStageIndex = 0;
+        let transitionLocked = false;
+        let activeAudio = null;
+        let animationFrameId = null;
+
+        const STAGES = [
+            'opening',          // 0
+            'question_1',       // 1
+            'confession',       // 2
+            'ceasefire',        // 3
+            'media_1',          // 4
+            'question_2',       // 5
+            'media_2',          // 6
+            'final_message'     // 7
+        ];
+
+        // GUARANTEED APPLICATION BOOT SEQUENCE
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Initialize background canvas animation safely in isolation
+                initParticleCanvasSafe();
+            } catch (err) {
+                console.warn('Canvas particle system failed to initialize:', err);
+            }
+
+            try {
+                // Render Stage 0 immediately - UNCONDITIONAL
+                renderStage('opening');
+                const openingScene = document.querySelector('.scene');
+                if (openingScene) openingScene.classList.add('enter-active');
+            } catch (bootErr) {
+                console.error('Critical application boot failure:', bootErr);
+                showFatalBootError();
+            }
+        });
+
+        function showFatalBootError() {
+            const app = document.getElementById('app');
+            if (app) {
+                app.innerHTML = `
+                    <div class="glass-card" style="text-align:center; max-width:360px;">
+                        <h2 style="color:var(--rose);">Experience Load Issue</h2>
+                        <p>Something went wrong initializing the scene.</p>
+                        <div class="btn-group">
+                            <button class="btn btn-gold" onclick="window.location.reload()">Reload Application</button>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        // Single-Container Router
+        async function goToStage(stageName) {
+            if (transitionLocked) return;
+            transitionLocked = true;
+
+            // Stop and destroy previous audio
+            if (activeAudio) {
+                try {
+                    activeAudio.pause();
+                    activeAudio.currentTime = 0;
+                } catch(e){}
+                activeAudio = null;
+            }
+
+            const app = document.getElementById('app');
+            const currentScene = app.querySelector('.scene');
+
+            // Animate and clear previous stage from DOM
+            if (currentScene) {
+                currentScene.classList.remove('enter-active');
+                currentScene.classList.add('exit-active');
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            // Wipe app container completely
+            app.innerHTML = '';
+
+            // Update fixed navigation progress indicator
+            currentStageIndex = STAGES.indexOf(stageName);
+            updateProgressDots(currentStageIndex);
+
+            // Render new stage
+            renderStage(stageName);
+
+            // Trigger enter transition
+            const newScene = app.querySelector('.scene');
+            if (newScene) {
+                void newScene.offsetWidth; // Force Reflow
+                newScene.classList.add('enter-active');
+            }
+
+            setTimeout(() => {
+                transitionLocked = false;
+            }, 500);
+        }
+
+        function updateProgressDots(idx) {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, dIdx) => {
+                if (dIdx <= idx) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+
+        // ==========================================
+        // 2. SCENE RENDERERS (STORY PRESERVED EXACTLY)
+        // ==========================================
+        function renderStage(stageName) {
+            const app = document.getElementById('app');
+
+            switch (stageName) {
+                case 'opening':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="glass-card">
+                                <h1>Welcome, Mrs. Sudip ❤️</h1>
+                                <p>We’re very sorry that Mr. Sudip disappointed you.</p>
+                                <p>But before you decide his fate…</p>
+                                <p>there’s something he wants you to see.</p>
+                                <div class="btn-group">
+                                    <button class="btn btn-gold" onclick="goToStage('question_1')">GET IN →</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    break;
+
+                case 'question_1':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="glass-card">
+                                <h2>Are you mad at Mr. Sudip?</h2>
+                                <div class="btn-group" id="q1-btns">
+                                    <button class="btn" onclick="handleQ1(true)">YES 😤</button>
+                                    <button class="btn" onclick="handleQ1(false)">NO 🥺</button>
+                                </div>
+                                <div id="q1-resp" class="hidden" style="margin-top:15px;">
+                                    <p id="q1-text"></p>
+                                    <div class="btn-group">
+                                        <button class="btn btn-gold" onclick="goToStage('confession')">Continue →</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    break;
+
+                case 'confession':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="glass-card">
+                                <h2>Mr. Sudip has a confession...</h2>
+                                <p>Sometimes he says the wrong thing.</p>
+                                <p>Sometimes he messes things up.</p>
+                                <p>Sometimes his ego gets in the way.</p>
+                                <p style="margin-top:12px;">But there's one thing he never wants to mess up...</p>
+                                <div class="cursive">YOU. ❤️</div>
+                                <p>Because somehow... You became the person whose smile can completely change his entire day.</p>
+                                <div class="btn-group">
+                                    <button class="btn btn-gold" onclick="goToStage('ceasefire')">There's more... ❤️</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    break;
+
+                case 'ceasefire':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="glass-card">
+                                <h2>You know what's funny?</h2>
+                                <p>Out of all the people in this world... somehow, you became the person whose happiness matters to him a little too much.</p>
+                                <p>And when you're angry with him...</p>
+                                <p>Suddenly Mr. Sudip doesn't know what to do with himself. 🥺</p>
+                                <p style="color: var(--soft-pink); font-weight: 500; margin-top:10px;">So, Mrs. Sudip...</p>
+                                <p>Can we call a temporary ceasefire?</p>
+                                <div class="btn-group" id="cf-btns">
+                                    <button class="btn" onclick="handleCeasefire(true)">Maybe ❤️</button>
+                                    <button class="btn" onclick="handleCeasefire(false)">Still Mad 😤</button>
+                                </div>
+                                <div id="cf-resp" class="hidden" style="margin-top:15px;">
+                                    <p id="cf-text"></p>
+                                    <div class="btn-group">
+                                        <button class="btn btn-gold" onclick="goToStage('media_1')">One more thing...</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    break;
+
+                case 'media_1':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="photo-frame" id="frame1">
+                                <div class="media-loader">Loading Photo 1...</div>
+                            </div>
+                            <div class="glass-card">
+                                <p>You are looking damn beautiful even when you are angry. ❤️</p>
+                                <div class="audio-wrapper">
+                                    <div class="audio-status" id="audioStatus1">Music 1: Press Play</div>
+                                    <audio id="audio1" controls preload="metadata">
+                                        <source src="assets/music1.mp3" type="audio/mpeg">
+                                        Your browser does not support audio playback.
+                                    </audio>
+                                </div>
+                                <div class="btn-group" style="margin-top:15px;">
+                                    <button class="btn" onclick="goToStage('question_2')">NO, I AM NOT 😤</button>
+                                    <button class="btn btn-gold" onclick="goToStage('question_2')">YES, I AM 😌</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    setupMediaStage(1, 'assets/photo1.jpg', 'audio1', 'question_2');
+                    break;
+
+                case 'question_2':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="glass-card">
+                                <h2>You are the most beautiful. ❤️</h2>
+                                <p style="font-size:1.05rem; color:var(--soft-pink); font-weight:600; margin:18px 0;">Hume ghutne pe lane ka irada hai?</p>
+                                <div class="btn-group" id="q3-btns">
+                                    <button class="btn" onclick="handleQ3()">YES ❤️</button>
+                                    <button class="btn" onclick="handleQ3()">NO 😤</button>
+                                </div>
+                                <div id="q3-reply" class="hidden" style="margin-top:15px;">
+                                    <p>Too late... you've already done it. ❤️</p>
+                                    <div class="btn-group">
+                                        <button class="btn btn-gold" onclick="goToStage('media_2')">Continue ❤️</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    break;
+
+                case 'media_2':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="photo-frame" id="frame2">
+                                <div class="media-loader">Loading Photo 2...</div>
+                            </div>
+                            <div class="glass-card">
+                                <p>Some pictures are beautiful because of the picture... Some are beautiful because of the person in them.</p>
+                                <p style="color:var(--gold); font-weight:600; margin-bottom:12px;">And yours? Definitely the second one. ❤️</p>
+                                <div class="audio-wrapper">
+                                    <div class="audio-status" id="audioStatus2">Music 2: Press Play</div>
+                                    <audio id="audio2" controls preload="metadata">
+                                        <source src="assets/music2.mp3" type="audio/mpeg">
+                                        Your browser does not support audio playback.
+                                    </audio>
+                                </div>
+                                <div class="btn-group" style="margin-top:15px;">
+                                    <button class="btn btn-gold" onclick="goToStage('final_message')">Now there's one last thing... ❤️</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    setupMediaStage(2, 'assets/photo2.jpg', 'audio2', 'final_message');
+                    break;
+
+                case 'final_message':
+                    app.innerHTML = `
+                        <div class="scene">
+                            <div class="glass-card">
+                                <h1 class="cursive" style="font-size: 3.2rem;">Mrs. Sudip...</h1>
+                                <p>I don't know if a little website can fix everything.</p>
+                                <p>But I hope it reminds you of one thing...</p>
+                                <div style="margin:14px 0;">
+                                    <p style="color:var(--soft-pink); font-weight:600; margin-bottom:4px;">You are loved.</p>
+                                    <p style="color:var(--soft-pink); font-weight:600; margin-bottom:4px;">You are precious.</p>
+                                    <p style="color:var(--soft-pink); font-weight:600;">You are special.</p>
+                                </div>
+                                <p>And your smile means more to Mr. Sudip than he probably knows how to explain.</p>
+                                <p style="margin-top:12px;">So... Are we still mad at Mr. Sudip?</p>
+                                
+                                <div class="btn-group" id="final-btns">
+                                    <button class="btn" onclick="handleFinal(true)">YES 😤</button>
+                                    <button class="btn btn-gold" onclick="handleFinal(false)">Okay... come here ❤️</button>
+                                </div>
+
+                                <div id="final-reply" class="hidden" style="margin-top:18px;">
+                                    <p id="final-reply-text"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="finalSmileCard" class="glass-card hidden" style="position:fixed; z-index:150; max-width:320px; text-align:center;">
+                            <h2 class="cursive">Okay... now smile. ❤️</h2>
+                            <p style="text-align:right; font-family:'Cinzel'; color:var(--gold); margin-top:8px;">— Sudip</p>
+                        </div>`;
+                    break;
+            }
+        }
+
+        // Story Handlers
+        function handleQ1(isMad) {
+            document.getElementById('q1-btns').classList.add('hidden');
+            const resp = document.getElementById('q1-resp');
+            const txt = document.getElementById('q1-text');
+            resp.classList.remove('hidden');
+            txt.innerHTML = isMad 
+                ? "I knew it... 😔<br>And honestly... You have every right to be.<br>But there's something you should know..."
+                : "Then Mr. Sudip just got the best news of his day. ❤️";
+        }
+
+        function handleCeasefire(accepted) {
+            document.getElementById('cf-btns').classList.add('hidden');
+            const resp = document.getElementById('cf-resp');
+            const txt = document.getElementById('cf-text');
+            resp.classList.remove('hidden');
+            txt.innerHTML = !accepted 
+                ? "Fair enough. 😭<br>Mr. Sudip accepts his punishment.<br>But he's still going to try."
+                : "Thank you... ❤️<br>Now let Mr. Sudip show you something.";
+        }
+
+        function handleQ3() {
+            document.getElementById('q3-btns').classList.add('hidden');
+            document.getElementById('q3-reply').classList.remove('hidden');
+        }
+
+        function handleFinal(stillMad) {
+            document.getElementById('final-btns').classList.add('hidden');
+            const reply = document.getElementById('final-reply');
+            const txt = document.getElementById('final-reply-text');
+            reply.classList.remove('hidden');
+
+            txt.innerHTML = stillMad 
+                ? "Okay... 😭<br>I'll accept that. Take your time.<br>But just know... Mr. Sudip is still waiting for that smile. ❤️"
+                : "Then come here, you. ❤️<br><br>Apology accepted?";
+
+            setTimeout(() => { triggerRocketCelebration(); }, 1800);
+        }
+
+        // ==========================================
+        // 3. UNCROPPED MEDIA & STRICT AUDIO LIFECYCLE
+        // ==========================================
+        function setupMediaStage(stageId, photoSrc, audioElemId, nextStageName) {
+            const frame = document.getElementById(`frame${stageId}`);
+            const audio = document.getElementById(audioElemId);
+            const statusLabel = document.getElementById(`audioStatus${stageId}`);
+
+            // Uncropped Photo Rendering with fallback error handling
+            const img = new Image();
+            img.src = photoSrc;
+            img.onload = () => {
+                frame.innerHTML = `<img src="${photoSrc}" alt="Photo ${stageId}">`;
+                console.log(`PHOTO ${stageId} LOADED: ${photoSrc}`);
+            };
+            img.onerror = () => {
+                console.error(`PHOTO ${stageId} ERROR — ${photoSrc}`);
+                frame.innerHTML = `<div class="media-loader" style="color:var(--rose);">Photo couldn't be loaded (${photoSrc})</div>`;
+            };
+
+            // HTML5 Audio Engine & Lifecycle
+            if (audio) {
+                activeAudio = audio;
+
+                audio.addEventListener('error', (e) => {
+                    console.error(`MUSIC ${stageId} ERROR — ${photoSrc}`, e);
+                    if (statusLabel) statusLabel.textContent = "Music couldn't be loaded.";
+                });
+
+                audio.addEventListener('play', () => {
+                    if (statusLabel) statusLabel.textContent = `Playing Music ${stageId} ❤️`;
+                });
+
+                audio.addEventListener('pause', () => {
+                    if (statusLabel) statusLabel.textContent = `Music ${stageId} Paused`;
+                });
+
+                // ONLY NATIVE ENDED EVENT TRIGGERS AUTOMATIC STAGE TRANSITION
+                audio.addEventListener('ended', () => {
+                    if (statusLabel) statusLabel.textContent = "Music finished ❤️";
+                    setTimeout(() => {
+                        goToStage(nextStageName);
+                    }, 1500);
+                });
+            }
+        }
+
+        // ==========================================
+        // 4. DEVELOPER DASHBOARD & LOCAL PREVIEW SUITE
+        // ==========================================
+        let devClicks = 0;
+        let devTimer = null;
+
+        document.getElementById('devStar').addEventListener('click', () => {
+            devClicks++;
+            clearTimeout(devTimer);
+            if (devClicks >= 5) {
+                devClicks = 0;
+                document.getElementById('devModal').classList.add('open');
+                document.getElementById('devAuthStep').classList.remove('hidden');
+                document.getElementById('devDashboardStep').classList.add('hidden');
+                document.getElementById('devHelpStep').classList.add('hidden');
+            } else {
+                devTimer = setTimeout(() => { devClicks = 0; }, 2000);
+            }
+        });
+
+        function closeDevModal() {
+            document.getElementById('devModal').classList.remove('open');
+            document.getElementById('devPasswordInput').value = '';
+            document.getElementById('authErr').textContent = '';
+        }
+
+        function verifyDevPassword() {
+            const pwd = document.getElementById('devPasswordInput').value;
+            if (pwd === '7231') {
+                showDevDashboard();
+            } else {
+                document.getElementById('authErr').textContent = 'Incorrect Password.';
+            }
+        }
+
+        function showDevDashboard() {
+            document.getElementById('devAuthStep').classList.add('hidden');
+            document.getElementById('devHelpStep').classList.add('hidden');
+            document.getElementById('devDashboardStep').classList.remove('hidden');
+            runDevDiagnostics();
+        }
+
+        function showDevHelp() {
+            document.getElementById('devDashboardStep').classList.add('hidden');
+            document.getElementById('devHelpStep').classList.remove('hidden');
+        }
+
+        function runDevDiagnostics() {
+            checkFileExists('assets/photo1.jpg', 'diagP1', 'image');
+            checkFileExists('assets/music1.mp3', 'diagM1', 'audio');
+            checkFileExists('assets/photo2.jpg', 'diagP2', 'image');
+            checkFileExists('assets/music2.mp3', 'diagM2', 'audio');
+        }
+
+        function checkFileExists(url, targetElemId, type) {
+            const elem = document.getElementById(targetElemId);
+            if (!elem) return;
+
+            if (type === 'image') {
+                const img = new Image();
+                img.src = url;
+                img.onload = () => { setDiagBadge(elem, true); };
+                img.onerror = () => { setDiagBadge(elem, false); };
+            } else {
+                const aud = new Audio();
+                aud.src = url;
+                aud.oncanplaythrough = () => { setDiagBadge(elem, true); };
+                aud.onerror = () => { setDiagBadge(elem, false); };
+            }
+        }
+
+        function setDiagBadge(elem, isOk) {
+            elem.textContent = isOk ? 'LOADED' : 'ERROR';
+            elem.className = 'diag-badge ' + (isOk ? 'diag-ok' : 'diag-err');
+        }
+
+        // Local Preview Generators using URL.createObjectURL()
+        function previewDevImage(input, imgElemId, metaElemId) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const url = URL.createObjectURL(file);
+                const img = document.getElementById(imgElemId);
+                const meta = document.getElementById(metaElemId);
+
+                img.src = url;
+                img.style.display = 'block';
+
+                const tempImg = new Image();
+                tempImg.src = url;
+                tempImg.onload = () => {
+                    meta.textContent = `Selected: ${file.name} (${tempImg.naturalWidth}x${tempImg.naturalHeight}px, ${(file.size/1024).toFixed(1)}KB)`;
+                };
+            }
+        }
+
+        function previewDevAudio(input, audioElemId, metaElemId) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const url = URL.createObjectURL(file);
+                const aud = document.getElementById(audioElemId);
+                const meta = document.getElementById(metaElemId);
+
+                aud.src = url;
+                aud.style.display = 'block';
+
+                aud.onloadedmetadata = () => {
+                    meta.textContent = `Selected: ${file.name} (${aud.duration.toFixed(1)}s, ${(file.size/(1024*1024)).toFixed(2)}MB)`;
+                };
+            }
+        }
+
+        // ==========================================
+        // 5. DECORATIVE ANIMATION ENGINE
+        // ==========================================
+        let pCanvas, pCtx, pWidth, pHeight;
+        let particles = [], butterflies = [];
+
+        function initParticleCanvasSafe() {
+            pCanvas = document.getElementById('particleCanvas');
+            if (!pCanvas) return;
+            pCtx = pCanvas.getContext('2d');
+            if (!pCtx) return;
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * pWidth,
+                    y: Math.random() * pHeight,
+                    radius: Math.random() * 2 + 0.5,
+                    alpha: Math.random() * 0.7 + 0.3,
+                    speed: Math.random() * 0.3 + 0.1
+                });
+            }
+
+            for (let i = 0; i < 3; i++) {
+                butterflies.push({
+                    x: Math.random() * pWidth,
+                    y: Math.random() * pHeight,
+                    size: Math.random() * 6 + 8,
+                    angle: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.5 + 0.2,
+                    wingState: 0
+                });
+            }
+
+            renderParticles();
+        }
+
+        function resizeCanvas() {
+            if (!pCanvas) return;
+            pWidth = pCanvas.width = window.innerWidth;
+            pHeight = pCanvas.height = window.innerHeight;
+        }
+
+        function renderParticles() {
+            if (!pCtx) return;
+            pCtx.clearRect(0, 0, pWidth, pHeight);
+
+            particles.forEach(p => {
+                p.y -= p.speed;
+                if (p.y < 0) p.y = pHeight;
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                pCtx.fillStyle = `rgba(255, 183, 197, ${p.alpha})`;
+                pCtx.fill();
+            });
+
+            butterflies.forEach(b => {
+                b.x += Math.cos(b.angle) * b.speed;
+                b.y += Math.sin(b.angle) * b.speed;
+                b.wingState += 0.08;
+
+                if (b.x < -20 || b.x > pWidth + 20 || b.y < -20 || b.y > pHeight + 20) {
+                    b.x = Math.random() * pWidth;
+                    b.y = Math.random() * pHeight;
+                }
+
+                pCtx.save();
+                pCtx.translate(b.x, b.y);
+                pCtx.rotate(b.angle);
+
+                const wingScale = Math.abs(Math.sin(b.wingState));
+                pCtx.fillStyle = '#FFB7C5';
+                pCtx.beginPath();
+                pCtx.ellipse(-b.size / 2, 0, b.size * wingScale, b.size / 2, 0, 0, Math.PI * 2);
+                pCtx.ellipse(b.size / 2, 0, b.size * wingScale, b.size / 2, 0, 0, Math.PI * 2);
+                pCtx.fill();
+
+                pCtx.restore();
+            });
+
+            requestAnimationFrame(renderParticles);
+        }
+
+        function triggerRocketCelebration() {
+            const rCanvas = document.getElementById('rocketCanvas');
+            if (!rCanvas) return;
+            const rCtx = rCanvas.getContext('2d');
+            if (!rCtx) return;
+
+            rCanvas.width = window.innerWidth;
+            rCanvas.height = window.innerHeight;
+
+            let rx = rCanvas.width / 2;
+            let ry = rCanvas.height;
+            let targetY = rCanvas.height * 0.35;
+            let exploded = false;
+            let expParticles = [];
+
+            function animateRocket() {
+                rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
+
+                if (!exploded) {
+                    ry -= 8;
+                    rCtx.beginPath();
+                    rCtx.arc(rx, ry, 3, 0, Math.PI * 2);
+                    rCtx.fillStyle = '#D4AF37';
+                    rCtx.shadowBlur = 10;
+                    rCtx.shadowColor = '#D4AF37';
+                    rCtx.fill();
+
+                    if (ry <= targetY) {
+                        exploded = true;
+                        for (let i = 0; i < 90; i++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const speed = Math.random() * 6 + 2;
+                            expParticles.push({
+                                x: rx, y: ry,
+                                vx: Math.cos(angle) * speed,
+                                vy: Math.sin(angle) * speed,
+                                alpha: 1,
+                                size: Math.random() * 4 + 2,
+                                color: ['#FFB7C5', '#D4AF37', '#E63946', '#FFFFFF'][Math.floor(Math.random() * 4)]
+                            });
+                        }
+                    }
+                } else {
+                    expParticles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.05;
+                        p.alpha -= 0.01;
+
+                        if (p.alpha > 0) {
+                            rCtx.save();
+                            rCtx.globalAlpha = p.alpha;
+                            rCtx.fillStyle = p.color;
+                            rCtx.beginPath();
+                            rCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            rCtx.fill();
+                            rCtx.restore();
+                        }
+                    });
+
+                    if (expParticles[0] && expParticles[0].alpha < 0.3) {
+                        const card = document.getElementById('finalSmileCard');
+                        if (card) {
+                            card.classList.remove('hidden');
+                            card.style.opacity = '1';
+                        }
+                    }
+                }
+
+                if (!exploded || expParticles.some(p => p.alpha > 0)) {
+                    requestAnimationFrame(animateRocket);
+                }
+            }
+
+            animateRocket();
+        }
+    </script>
+</body>
+</html>
